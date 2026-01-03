@@ -26,6 +26,9 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, BarChart as ReBarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function EnhancedReviewsPage() {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [content, setContent] = useState("");

@@ -38,6 +38,9 @@ import { SortableTaskItem } from "@/components/dashboard/sortable-task-item";
 import { cn, getTodayDate } from "@/lib/utils";
 import { PageHeader } from "@/components/dashboard/page-header";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function EnhancedTasksPage() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);

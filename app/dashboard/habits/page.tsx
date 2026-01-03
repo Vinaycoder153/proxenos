@@ -22,6 +22,9 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
+// Force dynamic rendering - don't try to statically generate this page
+export const dynamic = 'force-dynamic';
+
 export default function EnhancedHabitsPage() {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [todayLogs, setTodayLogs] = useState<string[]>([]);

@@ -22,6 +22,9 @@ import { Switch } from "@/components/ui/switch";
 
 import { useSettings } from "@/lib/hooks/use-settings";
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 export default function SettingsPage() {
     const { toast } = useToast();
     const { settings, updateSettings } = useSettings();
