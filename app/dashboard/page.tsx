@@ -17,6 +17,20 @@ import { cn, getTodayDate } from "@/lib/utils";
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
+    // Check if Supabase credentials are available
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center space-y-4">
+                    <h1 className="text-2xl font-bold">Configuration Required</h1>
+                    <p className="text-muted-foreground">
+                        Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
