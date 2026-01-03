@@ -1,0 +1,229 @@
+FILE:app\dashboard\habits\page.tsx
+  L36:react-hooks/immutability - Error: Cannot access variable before it is declared
+
+`fetchData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\habits\page.tsx:36:9
+  34 |
+  35 |     useEffect(() => {
+> 36 |         fetchData();
+     |         ^^^^^^^^^ `fetchData` accessed before it is declared
+  37 |     }, []);
+  38 |
+  39 |     async function fetchData() {
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\habits\page.tsx:39:5
+  37 |     }, []);
+  38 |
+> 39 |     async function fetchData() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |         const [habitsRes, logsRes, allLogsRes] = await Promise.all([
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |             fetch("/api/habits"),
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 60 |         setLoading(false);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 61 |     }
+     | ^^^^^^ `fetchData` is declared here
+  62 |
+  63 |     function calculateStreaks(logs: HabitLog[]) {
+  64 |         const streakMap: Record<string, number> = {};
+  L52:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L74:prefer-const - 'checkDate' is never reassigned. Use 'const' instead.
+FILE:app\dashboard\reviews\page.tsx
+  L34:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L36:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L59:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+FILE:app\dashboard\tasks\page.tsx
+  L64:react-hooks/immutability - Error: Cannot access variable before it is declared
+
+`fetchTasks` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\tasks\page.tsx:64:9
+  62 |
+  63 |     useEffect(() => {
+> 64 |         fetchTasks();
+     |         ^^^^^^^^^^ `fetchTasks` accessed before it is declared
+  65 |     }, []);
+  66 |
+  67 |     useEffect(() => {
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\tasks\page.tsx:71:5
+  69 |     }, [tasks, searchQuery, filterPriority]);
+  70 |
+> 71 |     async function fetchTasks() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |         const res = await fetch("/api/tasks");
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |         if (res.ok) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |             const data = await res.json();
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |             setTasks(data);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |         setLoading(false);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |     }
+     | ^^^^^^ `fetchTasks` is declared here
+  79 |
+  80 |     function filterTasks() {
+  81 |         let filtered = [...tasks];
+  L68:react-hooks/immutability - Error: Cannot access variable before it is declared
+
+`filterTasks` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\tasks\page.tsx:68:9
+  66 |
+  67 |     useEffect(() => {
+> 68 |         filterTasks();
+     |         ^^^^^^^^^^^ `filterTasks` accessed before it is declared
+  69 |     }, [tasks, searchQuery, filterPriority]);
+  70 |
+  71 |     async function fetchTasks() {
+
+C:\Users\Dell\OneDrive\Desktop\a2\app\dashboard\tasks\page.tsx:80:5
+  78 |     }
+  79 |
+> 80 |     function filterTasks() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         let filtered = [...tasks];
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |         if (searchQuery) {
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 90 |         setFilteredTasks(filtered);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 91 |     }
+     | ^^^^^^ `filterTasks` is declared here
+  92 |
+  93 |     const handleDragEnd = (event: DragEndEvent) => {
+  94 |         const { active, over } = event;
+FILE:components\dashboard\Greeting.tsx
+  L10:react-hooks/set-state-in-effect - Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\dashboard\Greeting.tsx:10:24
+   8 |     useEffect(() => {
+   9 |         const hour = new Date().getHours();
+> 10 |         if (hour < 12) setGreeting("Good Morning");
+     |                        ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  11 |         else if (hour < 18) setGreeting("Good Afternoon");
+  12 |         else setGreeting("Good Evening");
+  13 |     }, []);
+FILE:components\dashboard\ai-suggestions.tsx
+  L19:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L29:react-hooks/immutability - Error: Cannot access variable before it is declared
+
+`analyzeData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\dashboard\ai-suggestions.tsx:29:9
+  27 |
+  28 |     useEffect(() => {
+> 29 |         analyzeData();
+     |         ^^^^^^^^^^^ `analyzeData` accessed before it is declared
+  30 |     }, [tasks, habits, logs]);
+  31 |
+  32 |     const analyzeData = () => {
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\dashboard\ai-suggestions.tsx:32:5
+  30 |     }, [tasks, habits, logs]);
+  31 |
+> 32 |     const analyzeData = () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 33 |         setLoading(true);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |         const newSuggestions: Suggestion[] = [];
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |         setLoading(false);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |     };
+     | ^^^^^^^ `analyzeData` is declared here
+  87 |
+  88 |     return (
+  89 |         <Card className="glass border-primary/20 bg-primary/5 overflow-hidden group">
+FILE:components\dashboard\pomodoro-timer.tsx
+  L44:react-hooks/immutability - Error: Cannot access variable before it is declared
+
+`handleTimerComplete` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\dashboard\pomodoro-timer.tsx:44:25
+  42 |                 setTimeLeft((prev) => {
+  43 |                     if (prev <= 1) {
+> 44 |                         handleTimerComplete();
+     |                         ^^^^^^^^^^^^^^^^^^^ `handleTimerComplete` accessed before it is declared
+  45 |                         return 0;
+  46 |                     }
+  47 |                     return prev - 1;
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\dashboard\pomodoro-timer.tsx:59:5
+  57 |     }, [isRunning, mode]);
+  58 |
+> 59 |     const handleTimerComplete = () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 60 |         setIsRunning(false);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 61 |
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 90 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 91 |     };
+     | ^^^^^^^ `handleTimerComplete` is declared here
+  92 |
+  93 |     const toggleTimer = () => {
+  94 |         setIsRunning(!isRunning);
+FILE:components\layout\Shell.tsx
+  L18:react-hooks/set-state-in-effect - Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Dell\OneDrive\Desktop\a2\components\layout\Shell.tsx:18:9
+  16 |
+  17 |     useEffect(() => {
+> 18 |         setCurrentSettings(settings);
+     |         ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  19 |
+  20 |         const handleUpdate = (e: any) => {
+  21 |             setCurrentSettings(e.detail);
+  L20:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+FILE:components\layout\Sidebar.tsx
+  L8:@typescript-eslint/no-empty-object-type - An interface declaring no members is equivalent to its supertype.
+FILE:components\ui\command.tsx
+  L26:@typescript-eslint/no-empty-object-type - An interface declaring no members is equivalent to its supertype.
+FILE:lib\ai.ts
+  L13:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L13:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L13:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L51:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L51:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+  L60:@typescript-eslint/no-explicit-any - Unexpected any. Specify a different type.
+FILE:lib\hooks\use-settings.ts
+  L26:react-hooks/set-state-in-effect - Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Dell\OneDrive\Desktop\a2\lib\hooks\use-settings.ts:26:17
+  24 |         if (saved) {
+  25 |             try {
+> 26 |                 setSettings(JSON.parse(saved));
+     |                 ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |             } catch (e) {
+  28 |                 console.error("Failed to parse settings", e);
+  29 |             }

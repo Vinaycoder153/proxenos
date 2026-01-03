@@ -1,22 +1,19 @@
-import { createClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { data: habits, error } = await supabase
+    const { data: habits, error: fetchError } = await supabase
         .from("habits")
         .select("*")
         .order("created_at", { ascending: true });
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (fetchError) {
+        return NextResponse.json({ error: fetchError.message }, { status: 500 });
     }
 
     return NextResponse.json(habits);
 }
+

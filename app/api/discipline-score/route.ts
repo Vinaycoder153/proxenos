@@ -1,19 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/api-auth";
+import { getTodayDate } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
     // Get total active habits
     const { count: totalHabits, error: habitsError } = await supabase
         .from("habits")
         .select("*", { count: 'exact', head: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user!.id);
 
     if (habitsError) {
         return NextResponse.json({ error: habitsError.message }, { status: 500 });
@@ -24,12 +21,11 @@ export async function GET() {
     }
 
     // Get completed habits for today
-    const today = new Date().toISOString().split('T')[0];
     const { count: completedToday, error: logsError } = await supabase
         .from("habit_logs")
         .select("*", { count: 'exact', head: true })
-        .eq("user_id", user.id)
-        .eq("completed_at", today);
+        .eq("user_id", user!.id)
+        .eq("completed_at", getTodayDate());
 
     if (logsError) {
         return NextResponse.json({ error: logsError.message }, { status: 500 });
@@ -43,3 +39,4 @@ export async function GET() {
         total: totalHabits
     });
 }
+

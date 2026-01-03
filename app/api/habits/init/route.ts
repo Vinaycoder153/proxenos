@@ -1,13 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export async function POST() {
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
     const defaultHabits = [
         { title: "Learning", description: "Read, course, or skill acquisition.", icon: "Brain" },
@@ -17,14 +13,15 @@ export async function POST(request: Request) {
         { title: "Sleep Discipline", description: "Bed before 11PM, 7h+ sleep.", icon: "Moon" },
     ];
 
-    const { data, error } = await supabase
+    const { data, error: insertError } = await supabase
         .from("habits")
-        .insert(defaultHabits.map(h => ({ ...h, user_id: user.id })))
+        .insert(defaultHabits.map(h => ({ ...h, user_id: user!.id })))
         .select();
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (insertError) {
+        return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
     return NextResponse.json(data);
 }
+

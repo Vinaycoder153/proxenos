@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "AI-powered productivity dashboard for discipline and habits.",
 };
 
+import { Toaster } from "@/components/ui/toaster";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,6 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

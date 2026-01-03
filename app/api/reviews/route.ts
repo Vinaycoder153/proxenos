@@ -1,51 +1,45 @@
-import { createClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/api-auth";
+import { getTodayDate } from "@/lib/utils";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { data: reviews, error } = await supabase
+    const { data: reviews, error: fetchError } = await supabase
         .from("reviews")
         .select("*")
         .order("date", { ascending: false });
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (fetchError) {
+        return NextResponse.json({ error: fetchError.message }, { status: 500 });
     }
 
     return NextResponse.json(reviews);
 }
 
 export async function POST(request: Request) {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
     const json = await request.json();
     const { content, rating, date } = json;
 
-    const { data, error } = await supabase
+    const { data, error: insertError } = await supabase
         .from("reviews")
         .insert({
-            user_id: user.id,
+            user_id: user!.id,
             content,
             rating,
-            date: date || new Date().toISOString().split('T')[0]
+            date: date || getTodayDate()
         })
         .select()
         .single();
 
-    if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (insertError) {
+        return NextResponse.json({ error: insertError.message }, { status: 500 });
     }
 
     return NextResponse.json(data);
 }
+

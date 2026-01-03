@@ -1,13 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
+import { authenticateRequest } from "@/lib/api-auth";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const { user, supabase, error } = await authenticateRequest();
+    if (error) return error;
 
     const json = await request.json();
     const { habit_id, date, completed } = json;
@@ -18,27 +14,28 @@ export async function POST(request: Request) {
     }
 
     if (completed) {
-        const { data, error } = await supabase
+        const { data, error: upsertError } = await supabase
             .from("habit_logs")
             .upsert({
-                user_id: user.id,
+                user_id: user!.id,
                 habit_id,
                 completed_at: date
             }, { onConflict: 'user_id, habit_id, completed_at' })
             .select()
             .single();
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        if (upsertError) return NextResponse.json({ error: upsertError.message }, { status: 500 });
         return NextResponse.json({ status: "logged", data });
     } else {
-        const { error } = await supabase
+        const { error: deleteError } = await supabase
             .from("habit_logs")
             .delete()
-            .eq("user_id", user.id)
+            .eq("user_id", user!.id)
             .eq("habit_id", habit_id)
             .eq("completed_at", date);
 
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        if (deleteError) return NextResponse.json({ error: deleteError.message }, { status: 500 });
         return NextResponse.json({ status: "removed" });
     }
 }
+
