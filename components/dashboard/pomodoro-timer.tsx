@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, RotateCcw, Coffee, Brain } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/components/ui/use-toast";
 
 type TimerMode = 'work' | 'break' | 'longBreak';
@@ -120,95 +119,126 @@ export function PomodoroTimer() {
 
     const progress = ((TIMER_DURATIONS[mode] - timeLeft) / TIMER_DURATIONS[mode]) * 100;
 
+    const CIRCLE_RADIUS = 54;
+    const CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+    const strokeDashoffset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
+
+    const modeColors: Record<TimerMode, string> = {
+        work: 'var(--primary)',
+        break: 'rgb(34,197,94)',
+        longBreak: 'rgb(59,130,246)',
+    };
+    const modeColor = modeColors[mode];
+
     return (
-        <Card className="glass border-primary/20">
-            <CardHeader>
-                <CardTitle className="text-lg font-mono uppercase tracking-wider flex items-center gap-2">
-                    <Brain className="h-5 w-5 text-primary" />
+        <Card className="glass border-primary/20 overflow-hidden">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-mono uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
+                    <Brain className="h-4 w-4" />
                     Focus Timer
                 </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-5">
                 {/* Mode Selector */}
-                <div className="flex gap-2">
-                    <Button
-                        onClick={() => switchMode('work')}
-                        variant={mode === 'work' ? 'default' : 'outline'}
-                        size="sm"
-                        className={mode === 'work' ? 'bg-primary text-black' : ''}
-                    >
-                        Work
-                    </Button>
-                    <Button
-                        onClick={() => switchMode('break')}
-                        variant={mode === 'break' ? 'default' : 'outline'}
-                        size="sm"
-                        className={mode === 'break' ? 'bg-primary text-black' : ''}
-                    >
-                        Break
-                    </Button>
-                    <Button
-                        onClick={() => switchMode('longBreak')}
-                        variant={mode === 'longBreak' ? 'default' : 'outline'}
-                        size="sm"
-                        className={mode === 'longBreak' ? 'bg-primary text-black' : ''}
-                    >
-                        Long Break
-                    </Button>
+                <div className="flex gap-1.5 bg-white/5 p-1 rounded-xl border border-white/5">
+                    {([
+                        { value: 'work', label: 'Work' },
+                        { value: 'break', label: 'Break' },
+                        { value: 'longBreak', label: 'Long' },
+                    ] as { value: TimerMode; label: string }[]).map(({ value, label }) => (
+                        <button
+                            key={value}
+                            onClick={() => switchMode(value)}
+                            className={`flex-1 py-1.5 rounded-lg text-[10px] font-mono uppercase tracking-widest transition-all duration-200 ${mode === value
+                                ? 'bg-primary text-black font-black'
+                                : 'text-muted-foreground hover:text-white'
+                                }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
                 </div>
 
-                {/* Timer Display */}
-                <div className="text-center space-y-4">
+                {/* Circular Timer Display */}
+                <div className="flex flex-col items-center gap-4">
                     <div className="relative">
-                        <div className="text-7xl font-bold neon-text tabular-nums">
-                            {formatTime(timeLeft)}
-                        </div>
-                        <div className="text-sm text-muted-foreground font-mono uppercase mt-2">
-                            {mode === 'work' ? 'Focus Session' : mode === 'break' ? 'Short Break' : 'Long Break'}
+                        <svg
+                            className="w-44 h-44 -rotate-90"
+                            viewBox="0 0 140 140"
+                            aria-hidden="true"
+                        >
+                            {/* Background track */}
+                            <circle
+                                cx="70" cy="70" r={CIRCLE_RADIUS}
+                                stroke="rgba(255,255,255,0.05)"
+                                strokeWidth="8"
+                                fill="none"
+                            />
+                            {/* Progress arc */}
+                            <circle
+                                cx="70" cy="70" r={CIRCLE_RADIUS}
+                                stroke={modeColor}
+                                strokeWidth="8"
+                                fill="none"
+                                strokeDasharray={CIRCUMFERENCE}
+                                strokeDashoffset={strokeDashoffset}
+                                strokeLinecap="round"
+                                style={{
+                                    transition: 'stroke-dashoffset 1s linear',
+                                    filter: isRunning ? `drop-shadow(0 0 8px ${modeColor})` : 'none',
+                                }}
+                            />
+                        </svg>
+                        {/* Centered time & label */}
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                            <div className="text-4xl font-black tabular-nums tracking-tighter text-white">
+                                {formatTime(timeLeft)}
+                            </div>
+                            <div className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground mt-1">
+                                {mode === 'work' ? 'Focus' : mode === 'break' ? 'Short Break' : 'Long Break'}
+                            </div>
+                            {isRunning && (
+                                <div className="mt-1.5 flex items-center gap-1">
+                                    <div className="h-1 w-1 rounded-full bg-primary animate-ping" />
+                                    <span className="text-[8px] font-mono text-primary uppercase tracking-widest">Live</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    <Progress value={progress} className="h-2" />
-                </div>
-
-                {/* Controls */}
-                <div className="flex gap-2 justify-center">
-                    <Button
-                        onClick={toggleTimer}
-                        size="lg"
-                        className="bg-primary hover:bg-primary/90 text-black px-8"
-                    >
-                        {isRunning ? (
-                            <>
-                                <Pause className="h-5 w-5 mr-2" />
-                                Pause
-                            </>
-                        ) : (
-                            <>
-                                <Play className="h-5 w-5 mr-2" />
-                                Start
-                            </>
-                        )}
-                    </Button>
-                    <Button
-                        onClick={resetTimer}
-                        size="lg"
-                        variant="outline"
-                    >
-                        <RotateCcw className="h-5 w-5" />
-                    </Button>
+                    {/* Controls */}
+                    <div className="flex gap-3 items-center">
+                        <Button
+                            onClick={resetTimer}
+                            size="sm"
+                            variant="outline"
+                            className="h-9 w-9 p-0 border-white/10 bg-white/5 hover:bg-white/10 rounded-xl"
+                        >
+                            <RotateCcw className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            onClick={toggleTimer}
+                            className="h-12 px-8 bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-widest rounded-xl transition-all hover:glow-active"
+                        >
+                            {isRunning ? (
+                                <><Pause className="h-4 w-4 mr-2" />Pause</>
+                            ) : (
+                                <><Play className="h-4 w-4 mr-2" />Start</>
+                            )}
+                        </Button>
+                        <Coffee className="h-5 w-5 text-muted-foreground/30" />
+                    </div>
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                    <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">{completedPomodoros}</div>
-                        <div className="text-xs text-muted-foreground font-mono">Completed</div>
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/5">
+                    <div className="flex flex-col items-center gap-0.5 p-3 rounded-xl bg-white/5 border border-white/5">
+                        <div className="text-2xl font-black text-primary tabular-nums">{completedPomodoros}</div>
+                        <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">Sessions</div>
                     </div>
-                    <Coffee className="h-8 w-8 text-muted-foreground/50" />
-                    <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">{Math.floor(completedPomodoros / 4)}</div>
-                        <div className="text-xs text-muted-foreground font-mono">Long Breaks</div>
+                    <div className="flex flex-col items-center gap-0.5 p-3 rounded-xl bg-white/5 border border-white/5">
+                        <div className="text-2xl font-black text-blue-400 tabular-nums">{Math.floor(completedPomodoros / 4)}</div>
+                        <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">Long Breaks</div>
                     </div>
                 </div>
             </CardContent>

@@ -448,6 +448,45 @@
 }
 
 /* ============================================ */
+/* RESPONSIVE & CREATIVE ENHANCEMENTS          */
+/* ============================================ */
+
+@utility dashboard-grid-bg {
+    background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@utility animated-gradient-border {
+    position: relative;
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, var(--primary), oklch(0.6 0.2 280), var(--primary));
+        background-size: 200% 200%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: gradient-shift 4s ease infinite;
+        pointer-events: none;
+    }
+}
+
+/* ============================================ */
 /* TYPOGRAPHY UTILITIES - Clean & Consistent   */
 /* ============================================ */
 

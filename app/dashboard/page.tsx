@@ -58,71 +58,78 @@ export default async function DashboardPage() {
     const completionRate = habits.length > 0 ? Math.round((logs.length / habits.length) * 100) : 0;
 
     return (
-        <div className="space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-1000">
+        <div className="space-y-6 sm:space-y-8 max-w-[1600px] mx-auto animate-in fade-in duration-1000">
             {/* HUD Header */}
-            <div className="relative group overflow-hidden rounded-3xl border border-white/5 bg-black/40 p-8 md:p-12 mb-10">
-                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <div className="relative group overflow-hidden rounded-2xl sm:rounded-3xl border border-white/5 bg-black/40 p-5 sm:p-8 md:p-12 mb-6 sm:mb-10">
+                {/* Subtle grid pattern overlay */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none dashboard-grid-bg" />
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity hidden sm:block">
                     <Shield className="h-48 w-48 text-primary" />
                 </div>
 
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
-                    <div className="space-y-4">
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 sm:gap-10">
+                    <div className="space-y-3 sm:space-y-4">
                         <div className="flex items-center gap-3">
                             <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
-                            <span className="text-xs font-mono uppercase tracking-[0.5em] text-primary">System Online: Neural Link Stable</span>
+                            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] sm:tracking-[0.5em] text-primary">System Online: Neural Link Stable</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
+                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-white">
                             COMMAND <span className="gradient-text">CENTER</span>
                         </h1>
-                        <div className="flex items-center gap-4 text-muted-foreground font-mono text-sm uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full border border-white/10 w-fit">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-muted-foreground font-mono text-xs sm:text-sm uppercase tracking-widest bg-white/5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/10 w-fit">
                             <span className="text-primary/60">Operator:</span>
                             <span className="text-white">{user.email?.split('@')[0]}</span>
-                            <span className="text-white/20">|</span>
-                            <span className="text-primary/60">Sector:</span>
-                            <span className="text-white">A-01</span>
+                            <span className="text-white/20 hidden sm:inline">|</span>
+                            <span className="text-primary/60 hidden sm:inline">Sector:</span>
+                            <span className="text-white hidden sm:inline">A-01</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-8 md:gap-12 bg-white/5 p-8 rounded-2xl border border-white/10 backdrop-blur-xl">
-                        <div className="text-center space-y-2">
+                    <div className="flex items-center gap-5 sm:gap-8 md:gap-12 bg-white/5 p-5 sm:p-8 rounded-2xl border border-white/10 backdrop-blur-xl w-full md:w-auto">
+                        <div className="text-center space-y-1 sm:space-y-2 flex-1 md:flex-none">
                             <div className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-[0.3em]">Neural Load</div>
-                            <div className="text-5xl font-black tracking-tighter text-white tabular-nums">
-                                {pendingCount}<span className="text-primary text-2xl font-mono">/20</span>
+                            <div className="text-4xl sm:text-5xl font-black tracking-tighter text-white tabular-nums">
+                                {pendingCount}<span className="text-primary text-xl sm:text-2xl font-mono">/20</span>
                             </div>
                         </div>
-                        <div className="h-16 w-px bg-white/10" />
-                        <div className="text-right space-y-2">
+                        <div className="h-12 sm:h-16 w-px bg-white/10" />
+                        <div className="text-right space-y-1 sm:space-y-2 flex-1 md:flex-none">
                             <div className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-[0.3em]">Integrity Score</div>
-                            <div className="text-5xl font-black tracking-tighter gradient-text tabular-nums">{aiFeedback.score}%</div>
+                            <div className="text-4xl sm:text-5xl font-black tracking-tighter gradient-text tabular-nums">{aiFeedback.score}%</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
                 {[
                     { label: "Active Objectives", value: pendingCount, icon: Target, color: "text-orange-500", detail: "System queue depth" },
                     { label: "Protocol Compliance", value: `${completionRate}%`, icon: Shield, color: "text-primary", detail: `${logs.length}/${habits.length} Records log`, bar: true, barValue: completionRate },
                     { label: "Neural Velocity", value: "94.2", icon: Zap, color: "text-yellow-500", detail: "Tasks/hour avg" },
                     { label: "System Uptime", value: "14.2d", icon: Activity, color: "text-blue-500", detail: "Current streak" },
                 ].map((stat, i) => (
-                    <StatsCard
+                    <div
                         key={i}
-                        label={stat.label}
-                        value={stat.value}
-                        icon={stat.icon}
-                        color={stat.color}
-                        detail={stat.detail}
-                        bar={stat.bar}
-                        barValue={stat.barValue}
-                    />
+                        className="animate-in fade-in slide-in-from-bottom-4 duration-700"
+                        style={{ animationDelay: `${i * 80}ms`, animationFillMode: 'both' }}
+                    >
+                        <StatsCard
+                            label={stat.label}
+                            value={stat.value}
+                            icon={stat.icon}
+                            color={stat.color}
+                            detail={stat.detail}
+                            bar={stat.bar}
+                            barValue={stat.barValue}
+                        />
+                    </div>
                 ))}
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-12">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-12">
                 {/* Left Column: Mission Log & AI Insights */}
-                <div className="lg:col-span-8 space-y-8">
+                <div className="lg:col-span-8 space-y-6 sm:space-y-8">
                     {/* Mission Critical Feed */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between px-2">
@@ -208,7 +215,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Right Column: AI Suggestions & System Status */}
-                <div className="lg:col-span-4 space-y-8">
+                <div className="lg:col-span-4 space-y-6 sm:space-y-8">
                     {/* Daily Briefing */}
                     <DailyBriefing plan={dailyPlan} />
                     {/* Neural Insights Component */}

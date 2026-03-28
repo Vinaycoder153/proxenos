@@ -48,12 +48,15 @@ export function Sidebar({ className }: SidebarProps) {
             <div className="space-y-6 py-8">
                 <div className="px-6 py-2">
                     <div className="flex items-center gap-3 mb-10 group cursor-pointer">
-                        <div className="p-2 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors">
-                            <Shield className="h-6 w-6 text-primary neon-text" />
+                        <div className="p-2 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-all duration-300 group-hover:shadow-[0_0_12px_rgba(var(--primary),0.4)]">
+                            <Shield className="h-6 w-6 text-primary" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-tighter text-white gradient-text">
-                            NEXUS <span className="text-primary/50 text-xs font-mono ml-1">v4.0</span>
-                        </h2>
+                        <div>
+                            <h2 className="text-2xl font-black tracking-tighter text-white gradient-text leading-none">
+                                NEXUS
+                            </h2>
+                            <span className="text-[9px] font-mono text-primary/40 uppercase tracking-[0.3em]">v4.0 · AI OS</span>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
