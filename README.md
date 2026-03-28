@@ -103,7 +103,7 @@ npm run dev
 Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL="your-url"
+NEXT_PUBLIC_SUPABASE_URL="your url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-key"
 ```
 
