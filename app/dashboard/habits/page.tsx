@@ -25,6 +25,23 @@ import {
 // Force dynamic rendering - don't try to statically generate this page
 export const dynamic = 'force-dynamic';
 
+type StreakTier = {
+    label: string;
+    className: string;
+    dotColor: string;
+    threshold: number;
+};
+
+const STREAK_TIERS: StreakTier[] = [
+    { label: "Elite Pro", threshold: 21, className: "border-violet-500/40 text-violet-400 bg-violet-500/10", dotColor: "bg-violet-400 shadow-[0_0_5px_theme(colors.violet.400)]" },
+    { label: "Elite",     threshold: 7,  className: "border-yellow-500/40 text-yellow-400 bg-yellow-500/10", dotColor: "bg-yellow-400 shadow-[0_0_5px_theme(colors.yellow.400)]" },
+    { label: "Pro",       threshold: 3,  className: "border-cyan-500/40 text-cyan-400 bg-cyan-500/10",       dotColor: "bg-cyan-400 shadow-[0_0_5px_theme(colors.cyan.400)]" },
+];
+
+function getStreakTier(streak: number): StreakTier | null {
+    return STREAK_TIERS.find(t => streak >= t.threshold) ?? null;
+}
+
 export default function EnhancedHabitsPage() {
     const [habits, setHabits] = useState<Habit[]>([]);
     const [todayLogs, setTodayLogs] = useState<string[]>([]);
@@ -268,22 +285,30 @@ export default function EnhancedHabitsPage() {
                                                 <span className="text-[10px] font-mono text-muted-foreground/40 uppercase">Day Streak</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-end gap-1">
-                                            {streak >= 7 && (
-                                                <Badge variant="outline" className="text-[8px] border-yellow-500/30 text-yellow-500 bg-yellow-500/5 font-mono uppercase px-1.5 h-4">
-                                                    Elite Class
-                                                </Badge>
-                                            )}
+                                        <div className="flex flex-col items-end gap-1.5">
+                                            {(() => {
+                                                const tier = getStreakTier(streak);
+                                                return tier ? (
+                                                    <Badge variant="outline" className={cn("text-[8px] font-mono uppercase px-1.5 h-4 transition-all duration-500", tier.className)}>
+                                                        {tier.label}
+                                                    </Badge>
+                                                ) : null;
+                                            })()}
                                             <div className="flex gap-1">
-                                                {[...Array(7)].map((_, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className={cn(
-                                                            "h-1.5 w-1.5 rounded-full transition-all duration-500",
-                                                            i < (streak % 7) ? "bg-primary shadow-[0_0_5px_var(--primary)]" : "bg-white/10"
-                                                        )}
-                                                    />
-                                                ))}
+                                                {(() => {
+                                                    const tier = getStreakTier(streak);
+                                                    const activeDotColor = tier?.dotColor ?? "bg-primary shadow-[0_0_5px_var(--primary)]";
+                                                    const filled = streak % 7 === 0 && streak > 0 ? 7 : streak % 7;
+                                                    return [...Array(7)].map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className={cn(
+                                                                "h-1.5 w-1.5 rounded-full transition-all duration-500",
+                                                                i < filled ? activeDotColor : "bg-white/10"
+                                                            )}
+                                                        />
+                                                    ));
+                                                })()}
                                             </div>
                                         </div>
                                     </div>
